@@ -1,0 +1,57 @@
+version: "3.0"
+services:
+  projectname-php:
+    image: vendorname.azurecr.io/projectname-php:tagname
+    ports:
+      - "9000"
+    networks:
+      - default
+    volumes:
+      - assetsmount:/app/public/assets
+    environment:
+      # SS Variables
+      SS_ENVIRONMENT_TYPE: ${SS_ENVIRONMENT_TYPE}
+      SS_TRUSTED_PROXY_IPS: "*"
+      SS_DEFAULT_ADMIN_USERNAME: ${SS_DEFAULT_ADMIN_USERNAME}
+      SS_DEFAULT_ADMIN_PASSWORD: ${SS_DEFAULT_ADMIN_PASSWORD}
+      SS_DATABASE_SERVER: ${SS_DATABASE_SERVER}
+      SS_DATABASE_USERNAME: ${SS_DATABASE_USERNAME}
+      SS_DATABASE_PASSWORD: ${SS_DATABASE_PASSWORD}
+      SS_DATABASE_NAME: ${SS_DATABASE_NAME}
+      SS_BASE_URL: ${SS_BASE_URL}
+      # App specific variables
+      SS_APP_URL: ${SS_APP_URL}
+
+  projectname-node:
+    image: vendorname.azurecr.io/projectname-node:tagname
+    ports:
+      - "3000"
+    networks:
+      - default
+    environment:
+      # Example nextjs variables
+      API_URL: ${API_URL}
+      REACT_APP_ENVIRONMENT: production
+      NODE_ENV: production
+
+  projectname-nginx:
+    image: vendorname.azurecr.io/projectname-nginx:tagname
+    ports:
+      - "80:8080"
+    environment:
+      WAIT_HOSTS: "projectname-php:9000, projectname-node:3000"
+      NGINX_PROXY_PHP: "projectname-php"
+      NGINX_PROXY_NODE: "projectname-node"
+      NGINX_HOST_API: ${SS_BASE_HOST}
+      NGINX_HOST_APP: ${SS_APP_HOST}
+    networks:
+      default:
+        # queries vs projectname-nginx will default to node, projectname-nginx-ss will go to api
+        aliases:
+          - projectname-nginx
+          - projectname-nginx-ss
+    volumes:
+      - assetsmount:/app/public/assets
+
+networks:
+  default:

@@ -1,0 +1,13 @@
+# App server (nextjs / node)
+server {
+    listen      8080;
+    server_name myproject-nginx ${NGINX_HOST_APP};
+    include     /opt/bitnami/nginx/conf/includes/app.include.conf;
+}
+
+# API Server (SilverStripe / PHP)
+server {
+    listen      8080;
+    server_name myproject-nginx-ss ${NGINX_HOST_API};
+    include     /opt/bitnami/nginx/conf/includes/api.include.conf;
+}

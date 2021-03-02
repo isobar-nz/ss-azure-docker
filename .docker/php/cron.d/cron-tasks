@@ -1,0 +1,5 @@
+# Run every 10 minutes
+
+*/10 * * * * cd /app && /opt/bitnami/php/bin/php ./vendor/silverstripe/framework/cli-script.php dev/cron >> /var/log/cron.log 2>&1
+
+* * * * * date > /var/log/cron_lastrun.log 2>&1
